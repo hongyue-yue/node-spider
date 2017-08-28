@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>数据分析</title>
+    <style type="text/css">
+      *{margin:0;padding:0;}
+      .pie{float:left;width:50%;height:400px}
+      #container2:after{content:'';display:table;clear:both;}
+    </style>
+    <script src="https://img.hcharts.cn/highcharts/highcharts.js"></script>
+  </head>
+  <body>
+   <div id="container" style="min-width:400px;height:400px;">
+   </div>
+   <div id="container2" style="width:100%;height:400px;">
+
+   </div>
+  </body>
+  <script type="text/javascript">
+     function ajaxGet(url,callback){
+       let xhr=new XMLHttpRequest();
+       xhr.onreadystatechange=function(){
+         if(xhr.readyState == 4){
+           if(xhr.status==200||xhr.status==304){
+             callback(JSON.parse(xhr.responseText));
+           }
+         }
+       }
+       //发送请求
+       xhr.open('get',url,true);
+       xhr.send();
+     }
+     function firstColumn(cityComposition,series){
+       new Highcharts.Chart('container',{
+           chart: {type: 'column'},
+           title: {text: '上海各区互联网职业招聘数量'},
+           subtitle: {text: '数据来源拉勾网'},
+           xAxis: {
+               categories:cityComposition,
+               crosshair: true
+           },
+           yAxis: {
+               min: 0,
+               title: {text: '招聘数量'}
+           },
+           plotOptions: {
+               column: {
+                   pointPadding: 0.2,
+                   borderWidth: 0
+               }
+           },
+           series:series
+        });
+     }
+     function secondPie(id,data){
+        new Highcharts.Chart(id,{
+          chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false
+          },
+          title: {text: '山海'+id+'职位各区数量占比'},
+          plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                        style: {
+                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                        }
+                    }
+                }
+           },
+           series: [{
+            type: 'pie',
+            name: '各区'+id+'职位占比',
+            data: data
+          }]
+        })
+     }
+     ajaxGet('/datas',function(datas){
+         //柱状图数据处理
+         let cityComposition=datas[0].cityComposition;
+         let series=[],i=0;
+         datas.forEach(function(data){
+            let arr=[];
+            let posiCom=data.posiCom;
+            for(let i=0;i<cityComposition.length;i++){
+              arr.push(posiCom[cityComposition[i]])
+            }
+            let obj={
+              name:data.position,
+              data:arr
+            }
+            series.push(obj);
+         })
+         if(series.length==datas.length) firstColumn(cityComposition,series)
+         //圆饼图数据处理
+         console.log(datas);
+         for(let i=0;i<datas.length;i++){
+            let  newNode=document.createElement("div");//创建新节点
+            newNode.setAttribute('id',datas[i].position);
+            newNode.setAttribute('class','pie');
+            document.getElementById('container2').appendChild(newNode);
+         }
+
+         datas.forEach(function(data){
+            let posiCom=data.posiCom;
+            let arrs=[]
+            /*let sum=0
+            for(let i=0;i<cityComposition.length;i++){
+              sum+=posiCom[cityComposition[i]];
+            }*/
+            for(let i=0;i<cityComposition.length;i++){
+                let name={
+                  name:cityComposition[i],
+                  y:(posiCom[cityComposition[i]]/data.poTotal).toFixed(3)*100
+                }
+                arrs.push(name)
+            }
+            let sum2=0;
+            for(let j=0;j<arrs.length;j++){
+              sum2+=arrs[j].y
+            }
+            arrs.push({name:'其他(无明确区域)',y:(100-sum2)});
+            console.log(arrs)
+            secondPie(data.position,arrs)
+         })
+     })
+  </script>
+</html>
