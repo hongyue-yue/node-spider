@@ -53,14 +53,14 @@
            series:series
         });
      }
-     function secondPie(id,data){
+     function secondPie(id,text,data){
         new Highcharts.Chart(id,{
           chart: {
                 plotBackgroundColor: null,
                 plotBorderWidth: null,
                 plotShadow: false
           },
-          title: {text: '山海'+id+'职位各区数量占比'},
+          title: {text: text},
           plotOptions: {
                 pie: {
                     allowPointSelect: true,
@@ -101,15 +101,21 @@
          //圆饼图数据处理
          console.log(datas);
          for(let i=0;i<datas.length;i++){
-            let  newNode=document.createElement("div");//创建新节点
-            newNode.setAttribute('id',datas[i].position);
-            newNode.setAttribute('class','pie');
-            document.getElementById('container2').appendChild(newNode);
+            let  newNode1=document.createElement("div");//创建新节点
+            newNode1.setAttribute('id',datas[i].position+'1');
+            newNode1.setAttribute('class','pie');
+            document.getElementById('container2').appendChild(newNode1);
+            let  newNode2=document.createElement("div");//创建新节点
+            newNode2.setAttribute('id',datas[i].position+'2');
+            newNode2.setAttribute('class','pie');
+            document.getElementById('container2').appendChild(newNode2);
          }
 
          datas.forEach(function(data){
             let posiCom=data.posiCom;
-            let arrs=[]
+            let yearCom=data.yearCom;
+            let arrs=[];
+            let years=[];
             /*let sum=0
             for(let i=0;i<cityComposition.length;i++){
               sum+=posiCom[cityComposition[i]];
@@ -126,8 +132,21 @@
               sum2+=arrs[j].y
             }
             arrs.push({name:'其他(无明确区域)',y:(100-sum2)});
-            console.log(arrs)
-            secondPie(data.position,arrs)
+
+            secondPie(data.position+'1','山海'+data.position+'职位各区数量占比',arrs)
+            for(year in yearCom){
+              let name={
+                name:year,
+                y:(yearCom[year]/data.poTotal).toFixed(3)*100
+              }
+              years.push(name)
+            }
+            let sum3=0;
+            for(let j=0;j<years.length;j++){
+              sum3+=arrs[j].y
+            }
+            arrs.push({name:'其他',y:(100-sum3)});
+            secondPie(data.position+'2','上海'+data.position+'职位经验年限要求占比',years)
          })
      })
   </script>

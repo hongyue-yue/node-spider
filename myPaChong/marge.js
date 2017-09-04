@@ -28,7 +28,9 @@ function marge(city,position,datas){
 }
 function computed(city,position,total){
   let shanghai=['虹口区','杨浦区','闵行区','浦东新区','徐汇区','长宁区','青浦区','松江区','静安区','黄浦区','普陀区','嘉定区','奉贤区','宝山区'];
+  let year=['1-3年','3-5年','5-10年','不限'];
   let posiCom={};
+  let yearCom={};
   let ok=0;
   mongodb.open((err,db)=>{
      if(err){
@@ -56,13 +58,33 @@ function computed(city,position,total){
          })
        },
        (done) => {
+         let i=1
+        db.collection(position,(err,collection)=>{
+            if(err){
+              mongodb.close();
+            }
+            year.forEach((ele)=>{
+              collection.find({workYear:ele}).toArray((err,arr)=>{
+                 if(err){
+                   mongodb.close();
+                 }else{
+                   yearCom[ele]=arr.length;
+                   if(i==year.length) done(null,posiCom)
+                   i+=1
+                 }
+              })
+            })
+         })
+       },
+       (done) => {
          console.log('computed')
          let computed={
            city:city,
            position:position,
            poTotal:total,
            cityComposition:shanghai,
-           posiCom:posiCom
+           posiCom:posiCom,
+           yearCom:yearCom
          };
          db.collection('positionCom',(err,collection)=>{
             if(err){
