@@ -11,7 +11,7 @@ app.get('/datas',function(req,res){
   var mongodb = new Db('pachong', new Server('localhost', 27017),{safe: true});
   mongodb.open(function(err,db) {
      if(err) mongodb.close();
-     db.listCollections().toArray(function(err, collections){
+     /*db.listCollections().toArray(function(err, collections){
        let comArray=[];
        for(let j=0;j<collections.length;j++){
          let collName=collections[j].name;
@@ -24,10 +24,14 @@ app.get('/datas',function(req,res){
               computes=computes.concat(arr)
               if(computes.length==comArray.length) res.send(computes)
             })
+       })*/
+       db.collection('positionCom').find({city:'上海'}).toArray(function(err,arr){
+         res.send(arr)
+         mongodb.close()
        })
      })
   })
-})
+
 app.listen(8090,function(){
   console.log('Express server listening on port 8090')
 })

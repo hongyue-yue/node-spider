@@ -5,7 +5,7 @@ var com=require('./marge')
 
 let datas=[];
 let length
-function save(urls,city,position,option,callback){
+function save(urls,city,position,option,pages,callback){
   let url=urls.url;
   let page=urls.page;
   superagent.post(url)
@@ -22,7 +22,8 @@ function save(urls,city,position,option,callback){
                   datas=datas.concat(posts);
                   console.log('第'+page+'页数据已保存');
                   length=datas.length;
-                }else if(datas.length==length&&!posts.length){
+                }
+                if(length==datas.length&&(page==pages||!posts.length)){
                   com.marge(city,position,datas);
                   length+=1;
                 }

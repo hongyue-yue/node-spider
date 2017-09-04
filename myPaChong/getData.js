@@ -51,7 +51,7 @@ function getData(city, position){
      },
      (cb)=>{
        async.mapLimit(urls, 3, (url, callback) => {
-           saveData.save(url,city,position,option,callback);
+           saveData.save(url,city,position,option,urls.length,callback);
        }, (err, result) => {
            if (err) throw err;
            if (result) {

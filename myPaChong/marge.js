@@ -64,7 +64,7 @@ function computed(city,position,total){
            cityComposition:shanghai,
            posiCom:posiCom
          };
-         db.collection(position+'Com',(err,collection)=>{
+         db.collection('positionCom',(err,collection)=>{
             if(err){
               mongodb.close();
             }
