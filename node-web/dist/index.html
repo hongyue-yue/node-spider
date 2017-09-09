@@ -19,6 +19,7 @@
   </body>
   <script type="text/javascript">
      function ajaxGet(url,callback){
+       console.log(url)
        let xhr=new XMLHttpRequest();
        xhr.onreadystatechange=function(){
          if(xhr.readyState == 4){
@@ -31,10 +32,15 @@
        xhr.open('get',url,true);
        xhr.send();
      }
-     function firstColumn(cityComposition,series){
+     function GetQueryString(name){
+     var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+     var r = window.location.search.substr(1).match(reg);
+     if(r!=null)return  unescape(r[2]); return null;
+     }
+     function firstColumn(text,cityComposition,series){
        new Highcharts.Chart('container',{
            chart: {type: 'column'},
-           title: {text: '上海各区互联网职业招聘数量'},
+           title: {text: text},
            subtitle: {text: '数据来源拉勾网'},
            xAxis: {
                categories:cityComposition,
@@ -81,7 +87,20 @@
           }]
         })
      }
-     ajaxGet('/datas',function(datas){
+     let city=GetQueryString('city');
+
+     ajaxGet('/datas?city='+city,function(datas){
+       switch(city){
+         case 'shanghai':
+         city="上海";
+         break;
+         case 'hangzhou':
+         city="杭州";
+         break;
+         case 'chengdu':
+         city="成都";
+         break;
+       }
          //柱状图数据处理
          let cityComposition=datas[0].cityComposition;
          let series=[],i=0;
@@ -97,7 +116,7 @@
             }
             series.push(obj);
          })
-         if(series.length==datas.length) firstColumn(cityComposition,series)
+         if(series.length==datas.length) firstColumn(city+'各区互联网职业招聘数量',cityComposition,series)
          //圆饼图数据处理
          console.log(datas);
          for(let i=0;i<datas.length;i++){
@@ -133,7 +152,7 @@
             }
             arrs.push({name:'其他(无明确区域)',y:(100-sum2)});
 
-            secondPie(data.position+'1','山海'+data.position+'职位各区数量占比',arrs)
+            secondPie(data.position+'1',city+data.position+'职位各区数量占比',arrs)
             for(year in yearCom){
               let name={
                 name:year,
@@ -146,7 +165,7 @@
               sum3+=arrs[j].y
             }
             arrs.push({name:'其他',y:(100-sum3)});
-            secondPie(data.position+'2','上海'+data.position+'职位经验年限要求占比',years)
+            secondPie(data.position+'2',city+data.position+'职位经验年限要求占比',years)
          })
      })
   </script>

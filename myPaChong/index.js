@@ -1,7 +1,7 @@
 
 const requestLagou=require('./getData');
 
-let city=["上海"];
+let city=["上海","杭州","成都"];
 let position=["web","java","php","ios","android","c++","python",".NET"];
 
 if(process.argv.length === 4&&city.includes(process.argv[2])&&position.includes(process.argv[3])){
