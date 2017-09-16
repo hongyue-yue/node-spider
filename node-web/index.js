@@ -9,17 +9,7 @@ app.use(express.static(path.join(__dirname, 'dist')));
 app.get('/datas?*',function(req,res){
   let computes=[];let i=0;
   let city=req.query.city;
-  switch(city){
-    case 'shanghai':
-    city="上海";
-    break;
-    case 'hangzhou':
-    city="杭州";
-    break;
-    case 'chengdu':
-    city="成都";
-    break;
-  }
+  console.log(city)
   var mongodb = new Db('pachong', new Server('localhost', 27017),{safe: true});
   mongodb.open(function(err,db) {
      if(err) mongodb.close();

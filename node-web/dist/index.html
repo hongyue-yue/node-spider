@@ -32,10 +32,15 @@
        xhr.open('get',url,true);
        xhr.send();
      }
-     function GetQueryString(name){
-     var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
-     var r = window.location.search.substr(1).match(reg);
-     if(r!=null)return  unescape(r[2]); return null;
+     function GetQueryString(){
+         let search= window.location.search.substr(1);
+         search=search.split('&');
+         let obj={};
+         for(let i=0;i<search.length;i++){
+           let arr=search[i].split('=');
+           obj[arr[0]]=arr[1]
+         }
+         return obj
      }
      function firstColumn(text,cityComposition,series){
        new Highcharts.Chart('container',{
@@ -87,20 +92,10 @@
           }]
         })
      }
-     let city=GetQueryString('city');
-
+     let city=GetQueryString().city;
+     city=decodeURI(city)
+     console.log(city)
      ajaxGet('/datas?city='+city,function(datas){
-       switch(city){
-         case 'shanghai':
-         city="上海";
-         break;
-         case 'hangzhou':
-         city="杭州";
-         break;
-         case 'chengdu':
-         city="成都";
-         break;
-       }
          //柱状图数据处理
          let cityComposition=datas[0].cityComposition;
          let series=[],i=0;
