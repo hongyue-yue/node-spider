@@ -1,4 +1,4 @@
-1.cd mypachong与node-web  npm install
+1.cd spider与node-web  npm install
 
 2.cd mypachong  node index 上海 java
 
