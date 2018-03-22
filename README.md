@@ -4,5 +4,5 @@
 
 3.cd node-web  node index 
 
-4.浏览器 http://localhost:8090
+4.浏览器 http://localhost:8090？city=上海
 
