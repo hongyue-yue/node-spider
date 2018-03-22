@@ -21,11 +21,9 @@ function save(urls,city,position,option,pages,callback){
                 if(posts.length){
                   datas=datas.concat(posts);
                   console.log('第'+page+'页数据已保存');
-                  length=datas.length;
                 }
-                if(length==datas.length&&(page==pages||!posts.length)){
+                if(page==pages){
                   com.marge(city,position,datas);
-                  length+=1;
                 }
                 callback(null, 'success');
            })
